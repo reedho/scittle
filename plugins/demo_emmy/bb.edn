@@ -7,7 +7,8 @@
         }
  :tasks
  {:requires ([scittle.build :as build]
-             [babashka.fs :as fs])
+             [babashka.fs :as fs]
+             [clojure.string :as str])
 
   clean {:doc "Start from clean slate."
          :task (do (run! fs/delete (fs/list-dir (fs/file "resources" "public" "js") "**.*"))

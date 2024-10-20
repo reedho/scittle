@@ -3,7 +3,16 @@
    [reagent.core :as r]
    [reagent.dom :as rdom]
    [emmy.viewer :as ev]
-   [clojure.walk :refer [postwalk]]))
+   [mathbox.core :as mathbox]
+   [mathbox.primitives :as mb]
+   [emmy.mathbox.plot :as plot]
+   [clojure.walk :refer [postwalk]]
+   [emmy.env :as e :refer [+ - * / zero? compare divide numerator denominator
+                           infinite? abs ref partial =
+                           ->infix ->TeX
+                           square sin cos tanh asin D cube simplify
+                           literal-function Lagrange-equations up]]
+   [emmy.mafs :as mafs]))
 
 (def viewer-name :emmy.scittle/reagent)
 
@@ -30,26 +39,38 @@
   `body`."
   [body]
   (eval
-   (list 'fn [] (strip-meta body))))
+   (list 'fn [] body)))
 
 
 ;; --- emmy viewer code demo ---
-
-(require
- '[emmy.env :as e]
- '[emmy.mafs :as mafs]
- )
 
 (def some-graph
   (mafs/mafs
    {:height 300}
    (mafs/cartesian)
    (mafs/vector [1 2] {:color :blue})
-   (mafs/of-x {:y (fn [x] (e/square (e/sin (e/+ x 3)))) :color :blue})
+   (mafs/of-x {:y (fn [x] (square (sin (+ x 3)))) :color :blue})
    (mafs/text "face" {:color :green})))
+
+(def another-graph
+  (ev/with-let [!phase [0 0]]
+    (let [shifted (ev/with-params {:atom !phase :params [0]}
+                    (fn [shift]
+                      (fn [x]
+                        (((cube D) tanh) (- x shift)))))]
+      (mafs/mafs
+       {:height 400}
+       (mafs/cartesian)
+       (mafs/of-x shifted)
+       (mafs/movable-point
+        {:atom !phase :constrain "horizontal"})
+       (mafs/inequality
+        {:y {:<= shifted :> cos} :color :blue})))))
 
 (defn my-component []
   [:div
-   [(->f some-graph)]])
+   [->f another-graph]
+   [:hr]
+   [->f some-graph]])
 
 (rdom/render [my-component] (.getElementById js/document "app"))

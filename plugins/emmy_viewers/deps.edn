@@ -1,13 +1,11 @@
 {:deps
  {io.github.mentat-collective/emmy-viewers
-  {:git/sha "0a33ca99dc6d189b07bea50c484f2a3eaf2747b0"
+  {:mvn/version "0.3.2"
    :exclusions [org.mentat/emmy
                 org.mentat/clerk-utils]}
 
-  io.github.mentat-collective/emmy {:git/sha    "53fd9909b835e7eeb21f798ba61fd7e6b5251cfc"
+  io.github.mentat-collective/emmy {:mvn/version "0.31.0"
                                     :exclusions [org.babashka/sci
                                                  org.mentat/clerk-utils]}
   org.mentat/clerk-utils {:mvn/version "0.6.0"
-                          :exclusions  [thheller/shadow-cljs]}
-
-  }}
+                          :exclusions  [thheller/shadow-cljs]}}}
